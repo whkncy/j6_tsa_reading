@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primary 6 English Reading Practice Web App</title>
+    <!-- Tailwind CSS for modern layout/styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
+
+    <div id="app" class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Application Header (Always Visible) -->
+        <header class="mb-8 flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="router.toDashboard()">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-lg shadow-md shadow-indigo-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900 tracking-tight">SmartRead P6</h1>
+                    <p class="text-xs text-slate-500">TSA Exam Interactive Prep Simulator</p>
+                </div>
+            </div>
+            <div id="global-stats" class="hidden text-sm bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full font-semibold"></div>
+        </header>
+
+        <!-- Dynamic Content Mount System -->
+        <main id="main-view"></main>
+    </div>
+
+    <!-- Script Configuration containing Complete Structured Mock Data, Engine & Routing Router Engine -->
+    <script>
+        // Massive Core Dataset curated across multiple authentic P6 text types
+        const TASKS_DATABASE = [
+            {
+                id: "2023-erw3-p1",
+                title: "School Sports Day Poster Analysis",
+                type: "Poster & Schedule Parsing",
+                source: "TSA 2023 6ERW3 Part 1",
+                difficulty: "Easy",
+                readingTime: "3 mins",
+                contextText: `
+                    <div class="border-4 border-dashed border-indigo-400 p-6 bg-amber-50 rounded-xl space-y-4 shadow-inner text-sm">
+                        <div class="text-center font-bold text-2xl text-indigo-900 tracking-wide uppercase">Sam Chan Primary School<br>🏆 SPORTS DAY 🏆</div>
+                        <div class="grid grid-cols-2 gap-4 bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+                            <div><strong>Date:</strong> 25 November 20XX</div>
+                            <div><strong>Time:</strong> 8:00 am – 4:00 pm</div>
+                            <div class="col-span-2"><strong>Place:</strong> Shatin Sports Ground, 20 Shing Mun Road, Shatin</div>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                            <span class="font-bold text-indigo-900 block mb-1">🚌 Public Transport:</span>
+                            <ul class="list-disc list-inside text-slate-700 space-y-0.5">
+                                <li>MTR Shatin Station (Exit B)</li>
+                                <li>Kowloon Motor Bus (KMB) (Bus No. 40X, 72, 72A, 80K, 85)</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <span class="font-bold text-indigo-900 block border-b pb-1 mb-2">⏱ Event Schedule:</span>
+                            <div class="grid grid-cols-3 gap-y-1.5 text-slate-700">
+                                <div class="font-semibold">08:00 am</div><div class="col-span-2">Roll Call</div>
+                                <div class="font-semibold">08:15 am</div><div class="col-span-2">Opening Ceremony: Speech by Principal</div>
+                                <div class="font-semibold">08:30 am - 12:15 pm</div><div class="col-span-2">Track Events</div>
+                                <div class="font-semibold">12:15 pm - 01:15 pm</div><div class="col-span-2 bg-yellow-100 px-1 rounded font-medium text-amber-900 w-max">Lunch Time</div>
+                                <div class="font-semibold">01:15 pm - 02:30 pm</div><div class="col-span-2">Field Events</div>
+                                <div class="font-semibold">02:30 pm - 03:00 pm</div><div class="col-span-2">Cheering Team Competition <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded ml-1">NEW!</span></div>
+                                <div class="font-semibold">03:00 pm</div><div class="col-span-2">Teachers' Relay <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded ml-1">NEW!</span></div>
+                                <div class="font-semibold">03:15 pm</div><div class="col-span-2">Prize-giving by Guests</div>
+                                <div class="font-semibold">03:45 pm</div><div class="col-span-2">Closing Ceremony</div>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-900 text-white p-4 rounded-lg">
+                            <span class="font-bold block border-b border-indigo-700 pb-1 mb-2">🌟 Honoured Guests:</span>
+                            <p class="text-indigo-200">💎 <strong>Mark Lee</strong>: Hong Kong Sportsman of the Year 2020</p>
+                            <p class="text-indigo-200">🤝 <strong>Gigi Wong</strong>: Chairperson of Kowloon Sports Club</p>
+                        </div>
+                        <div class="bg-slate-100 p-3 rounded-lg text-xs font-semibold text-slate-600 flex justify-between">
+                            <span>👟 Wear PE uniform & sports shoes</span>
+                            <span>🍱 Bring your own lunch & drinks</span>
+                        </div>
+                    </div>
+                `,
+                questions: [
+                    { id: "q1", num: 1, question: "Where will the Sports Day event be held?", options: ["Hong Kong Sports Centre", "Kowloon Sports Club", "Sam Chan Primary School", "Shatin Sports Ground"], answer: 3, skill: "Locating Specific Information (Scanning)", explanation: "The poster clearly lists the venue under 'Place' as 'Shatin Sports Ground, 20 Shing Mun Road, Shatin'." },
+                    { id: "q2", num: 2, question: "How many public bus routes are explicitly listed for transportation to the Sports Day?", options: ["Two", "Five", "Six", "Eight"], answer: 1, skill: "Data Retrieval and Counting", explanation: "Under Public Transport, the Kowloon Motor Bus (KMB) routes listed are: 40X, 72, 72A, 80K, and 85. Counting them yields exactly 5 separate bus lines." },
+                    { id: "q3", num: 3, question: "How long will the opening ceremony last?", options: ["10 minutes", "15 minutes", "30 minutes", "45 minutes"], answer: 1, skill: "Time Calculation and Schedule Analysis", explanation: "The Opening Ceremony starts at 8:15 am, and the subsequent event (Track Events) begins at 8:30 am. 8:30 minus 8:15 equals 15 minutes." },
+                    { id: "q4", num: 4, question: "Who is designated to deliver the opening speech?", options: ["The Principal", "Sam Chan", "Mark Lee", "Gigi Wong"], answer: 0, skill: "Skimming and Scanning Specific Details", explanation: "The schedule entry for 8:15 am specifically notes: 'Opening Ceremony: Speech by Principal'." },
+                    { id: "q5", num: 5, question: "Which of these features did NOT take place during last year's school sports day?", options: ["Invited guests", "Track events", "Closing ceremony", "Cheering team competition"], answer: 3, skill: "Identifying Novel/Explicit Statements", explanation: "The poster features a dynamic sub-note titled 'New This Year!' which explicitly includes the 'Cheering Team Competition'. Thus, it did not exist last year." }
+                ]
+            },
+            {
+                id: "2023-erw1-p2",
+                title: "Electric Cars & Clean Energy Realities",
+                type: "Expository Article",
+                source: "TSA 2023 6ERW1 Part 2",
+                difficulty: "Medium",
+                readingTime: "4 mins",
+                contextText: `
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4 leading-relaxed text-slate-700">
+                        <h3 class="text-xl font-bold text-slate-900 border-b pb-2">Electric Cars</h3>
+                        <p><strong>[Para 1]</strong> In the past, cars only used petrol or diesel. Petrol and diesel cars cause air pollution. Today people can buy electric cars. Electric cars use energy stored in batteries. Therefore, they do not produce harmful gases. If there are more electric cars, people will enjoy cleaner air and better health. Electric cars run quietly and smoothly and they cause less noise pollution. Also, electricity costs less than petrol and diesel, so drivers can save money.</p>
+                        <p><strong>[Para 2]</strong> However, electric cars have problems too. They cannot go as far as petrol or diesel cars. Drivers need to charge them before the batteries run out. Hong Kong does not have enough charging stations. Charging takes at least 30 minutes each time. Some people think <span class="bg-yellow-200 px-1 font-semibold text-slate-900 rounded">this</span> is too slow.</p>
+                        <p><strong>[Para 3]</strong> The Hong Kong Government asks drivers to use electric cars. It wants the city to have no car pollution by 2050. There has been some success. The number of electric cars in Hong Kong was under 200 in 2010. Now it is over 15,000 and it will continue to rise.</p>
+                    </div>
+                `,
+                questions: [
+                    { id: "q2-1", num: 1, question: "Paragraph 1 is systematically focused on the ________ of electric vehicles.", options: ["Good points", "Bad points", "Total costs", "Pollution rates"], answer: 0, skill: "Identifying Main Ideas of Paragraphs", explanation: "Paragraph 1 outlines benefits such as cleaner air, better health, lower sound thresholds, and economic savings on fuel." },
+                    { id: "q2-2", num: 2, question: "Why do electric vehicles prevent environmental air pollution?", options: ["They utilize expensive premium petrol fuels.", "They operate silently and run smoothly.", "They do not require physical energy vectors.", "They do not release or yield harmful gases."], answer: 3, skill: "Understanding Cause-and-Effect Relationships", explanation: "The passage notes that because they use energy stored in internal batteries, 'therefore, they do not produce harmful gases'." },
+                    { id: "q2-3", num: 3, question: "According to data presented within Paragraph 1, who can save money?", options: ["Diesel car drivers", "Electric car drivers", "Petrol car drivers", "The Government bodies"], answer: 1, skill: "Direct Extraction of explicit data points", explanation: "The text says 'electricity costs less than petrol and diesel, so drivers [of electric cars] can save money.'" },
+                    { id: "q2-4", num: 4, question: "Based on Paragraph 2, what explicit factors slow down the popularity of electric cars in HK?", options: ["1 & 2 only", "1, 2 and 3", "1, 2 and 4", "All of the above statements"], answer: 2, skill: "Synthesizing Multiple Textual Details", explanation: "Paragraph 2 explicitly discusses range limitations (1), limited charging facilities (2), and length of charge time (4). It does not claim they are too expensive." },
+                    { id: "q2-5", num: 5, question: "In Paragraph 2, what does the index word 'this' precisely refer to?", options: ["Charging electric cars", "The peak velocity speed of electric cars", "Locating a vacant charging grid station", "Running completely out of storage batteries"], answer: 0, skill: "Contextual Pronoun Reference Resolution", explanation: "The sentence right before states 'Charging takes at least 30 minutes each time.' Hence, 'this' refers directly to the process or length of charging electric vehicles." }
+                ]
+            },
+            {
+                id: "2024-erw1-p4",
+                title: "Percy and the Magical Forest Tree",
+                type: "Narrative Fiction / Story",
+                source: "TSA 2024 6ERW1 Part 4",
+                difficulty: "Hard",
+                readingTime: "5 mins",
+                contextText: `
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4 text-slate-700 leading-relaxed">
+                        <h3 class="text-xl font-bold text-slate-900 border-b pb-2">The Magic Tree — Part I & II</h3>
+                        <p>Percy loved going to the forest. One day, he found a tree that was <span class="underline decoration-indigo-500 font-semibold text-indigo-900">weak as a kitten</span>. He was worried about it, so he went to water it every day. Slowly, the tree became stronger and healthier.</p>
+                        <p>One afternoon, Percy found something shiny on the ground and was surprised by it. It was a beautiful golden leaf. <em>'Keep it,'</em> a voice said. <em>'Thank you for saving me. I'm a magic tree. Make a wish with this golden leaf and your wish will come true.'</em> Percy put the leaf in his pocket.</p>
+                        <p>A greedy farmer saw Percy's leaf. He thought: <em>'I can't believe the golden leaf exists! I must secretly follow him tomorrow to locate the tree. After cutting it down, I can get all the leaves!'</em></p>
+                        <p>The next day, the farmer followed Percy, waited for him to leave, and chopped the tree with an axe. Following a loud <span class="font-semibold text-amber-700">thud</span>, the tree fell. Suddenly, all the leaves turned black, his axe disappeared, and he found no gold. The farmer left angry.</p>
+                        <p>The following day, Percy saw the fallen tree. He pulled out the golden leaf from his pocket, closed his eyes, and made a heartfelt wish...</p>
+                    </div>
+                `,
+                questions: [
+                    { id: "q3-1", num: 1, question: "What does the figurative phrase 'weak as a kitten' convey about the tree?", options: ["It was extremely healthy", "It was physically short", "It was robust and strong", "It was sick and frail"], answer: 3, skill: "Understanding Similes and Figurative Expressions", explanation: "The phrase 'weak as a kitten' is an idiomatic simile indicating fragility, sickness, or absolute lack of strength." },
+                    { id: "q3-2", num: 2, question: "What was the farmer's hidden motive or strategy regarding the magic tree?", options: ["To write an entry about it in a fairy-tale book", "To follow Percy to steal his pants pocket items", "To track Percy, locate the tree, fell it, and claim all its gold leaves", "To help Percy water and tend to the forest"], answer: 2, skill: "Inferencing Narrative Intent & Character Motivation", explanation: "The text reveals the farmer's internal plan to track Percy secretly, discover the tree's coordinates, cut it down, and harvest every single golden leaf." },
+                    { id: "q3-3", num: 3, question: "What does the onomatopoeia sound 'thud' indicate in the context of the second part?", options: ["The sound of the tree crying", "The sound of the farmer laughing out loud", "The impact sound of a heavy tree crashing into the earth ground", "The sound of hitting the axe against stones"], answer: 2, skill: "Interpreting Auditory and Contextual Word Signals", explanation: "A 'thud' represents a dull, heavy sound caused by a massive object—in this scenario, the body of the magic tree crashing to the forest ground." },
+                    { id: "q3-4", num: 4, question: "Why did the malicious farmer leave the forest in extreme anger?", options: ["He failed to acquire any gold leaves, and his physical axe completely vanished", "He got lost in the complex trail network of the woods", "He was violently hit by the branches of the collapsing tree", "Percy caught him in the act and called the authorities"], answer: 0, skill: "Tracing Plot Points and Character Reactions", explanation: "When the tree collapsed, its leaves turned black and the axe completely disappeared, frustrating his greedy intentions." }
+                ]
+            },
+            {
+                id: "2024-web-faq",
+                title: "Hong Kong Space Museum Visitor FAQ Portal",
+                type: "Informational Webpage / FAQ",
+                source: "P6 Mock Reading Framework Module A",
+                difficulty: "Easy",
+                readingTime: "3 mins",
+                contextText: `
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4 text-slate-700 text-sm">
+                        <div class="bg-sky-900 text-white p-3 rounded-lg font-bold text-center">🚀 HK Space Museum — Plan Your Visit</div>
+                        <p class="font-semibold text-slate-900 underline">Frequently Asked Questions (FAQs):</p>
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-indigo-600 font-bold">Q1: What are the opening hours?</p>
+                                <p class="pl-4 text-slate-600">Monday, Wednesday, Thursday & Friday: 1:00 pm – 9:00 pm.<br>Saturdays, Sundays & Public Holidays: 10:00 am – 9:00 pm.<br><span class="text-rose-600 font-bold">Note: Closed on Tuesdays (except Public Holidays).</span></p>
+                            </div>
+                            <div>
+                                <p class="text-indigo-600 font-bold">Q2: How much do tickets cost for the Exhibition Halls?</p>
+                                <p class="pl-4 text-slate-600">Standard Ticket: $10.<br>Concession Ticket (Students/Seniors over 60): $5.<br><span class="text-emerald-600 font-bold">Admission is free for everyone on Wednesdays!</span></p>
+                            </div>
+                            <div>
+                                <p class="text-indigo-600 font-bold">Q3: Are there any special regulations inside the theater rooms?</p>
+                                <p class="pl-4 text-slate-600">Yes. To protect our projections, flash photography and videography are <span class="bg-amber-100 px-1 font-semibold text-slate-900 rounded">strictly forbidden</span>. Visitors are also requested to switch all cellular devices to silent mode before entering.</p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                questions: [
+                    { id: "q4-1", num: 1, question: "If a student wants to visit the Space Museum for free, which day should they go?", options: ["Monday", "Tuesday", "Wednesday", "Sunday"], answer: 2, skill: "Locating Specific Conditions (Scanning)", explanation: "The FAQ section explicitly states: 'Admission is free for everyone on Wednesdays!'" },
+                    { id: "q4-2", num: 2, question: "An adult and a university student visit the exhibition hall on a Friday. How much do they pay in total?", options: ["$10", "$15", "$20", "Free"], answer: 1, skill: "Data Synthesis and Simple Math calculation", explanation: "An adult standard ticket is $10 and a student concession ticket is $5. $10 + $5 = $15." },
+                    { id: "q4-3", num: 3, question: "On which day is the Space Museum completely closed to the public if it is not a holiday?", options: ["Monday", "Tuesday", "Wednesday", "Friday"], answer: 1, skill: "Isolating Negations and Calendar Rules", explanation: "The alert note clearly specifies that the facility is 'Closed on Tuesdays (except Public Holidays)'." },
+                    { id: "q4-4", num: 4, question: "What does the phrase 'strictly forbidden' mean in the text?", options: ["Allowed with permission", "Encouraged for students", "Not allowed at all", "Open to changes"], answer: 2, skill: "Vocabulary in Context / Semantic Mapping", explanation: "'Strictly forbidden' implies a total ban, meaning it is absolutely not allowed." }
+                ]
+            },
+            {
+                id: "2025-diary-hike",
+                title: "Amy's Adventurous Weekend Diary Entry",
+                type: "Personal Diary",
+                source: "P6 Internal Literacy Assessment Module B",
+                difficulty: "Medium",
+                readingTime: "4 mins",
+                contextText: `
+                    <div class="bg-stone-50 p-6 rounded-xl border border-stone-200 shadow-inner text-slate-700 font-serif leading-relaxed">
+                        <div class="text-right text-xs font-sans font-bold text-stone-500">Sunday, 14 October 20XX</div>
+                        <h4 class="text-lg font-bold text-amber-900 border-b border-stone-200 pb-1 mb-3">Weather: Blustery and Chilly 🍂</h4>
+                        <p class="mb-3">Today started off wonderfully, but turned into an exhausting trial. Mum, Dad, and I decided to hike along Section 2 of the Dragon's Back trail. When we left the house at 9:00 am, the sky was clear as glass. I felt <span class="underline decoration-amber-500 font-bold text-slate-900">on top of the world</span> because I had passed my piano exam yesterday morning.</p>
+                        <p class="mb-3">By noon, things changed drastically. Strong mountain winds began howling, blowing my favorite straw hat right off into a steep valley. I could have wept! To make matters worse, Dad misread our trail map at a junction, causing us to walk in circles for an hour before finding the bus stop at Shek O Road.</p>
+                        <p>Despite my throbbing feet and my lost hat, when Mum bought us bowls of piping-hot fishball noodles at the village, my dynamic spirits returned. Tomorrow it's back to school, but I think I'll sleep like a log tonight.</p>
+                    </div>
+                `,
+                questions: [
+                    { id: "q5-1", num: 1, question: "Why did Amy feel 'on top of the world' at the beginning of the hike?", options: ["She loved walking in cold weather.", "She managed to clear her piano exam.", "She bought a brand-new straw hat.", "Her father found a shortcut on the map."], answer: 1, skill: "Connecting Text Details to Idiomatic Expressions", explanation: "Amy clarifies she felt on top of the world (extremely happy) because she 'had passed my piano exam yesterday morning'." },
+                    { id: "q5-2", num: 2, question: "What caused the group to waste an hour walking in circles?", options: ["The heavy rain blocked their vision.", "They stopped to eat fishball noodles.", "Amy's father misread the trail map coordinates.", "They spent an hour searching for a lost hat."], answer: 2, skill: "Identifying Fact Patterns / Cause-Effect", explanation: "The entry states: 'Dad misread our trail map at a junction, causing us to walk in circles for an hour'." },
+                    { id: "q5-3", num: 3, question: "How did Amy's feelings change at the end of the day after eating dinner?", options: ["She remained angry about her hat.", "She felt comforted and happier.", "She felt terrified of going to school.", "She was eager to continue hiking."], answer: 1, skill: "Tracking Character Emotional Trajectories", explanation: "She notes that when her mother bought hot noodles, her 'dynamic spirits returned', proving she felt better and comforted." },
+                    { id: "q5-4", num: 4, question: "When did Amy take her piano exam?", options: ["On Friday", "On Saturday morning", "On Sunday morning", "On Monday afternoon"], answer: 1, skill: "Chronological Sequence Mapping", explanation: "The diary is written on Sunday. She states she took her exam 'yesterday morning', which refers directly to Saturday morning." }
+                ]
+            },
+            {
+                id: "2025-email-charity",
+                title: "Arranging the Annual School Charity Bazaar",
+                type: "Formal Correspondence / E-mail",
+                source: "TSA Preparation Module C",
+                difficulty: "Hard",
+                readingTime: "5 mins",
+                contextText: `
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm text-sm space-y-3 text-slate-700">
+                        <div class="bg-slate-100 p-3 rounded-lg space-y-1 text-xs text-slate-600 font-mono">
+                            <div><strong>From:</strong> kelvinchan@smartreadschool.edu.hk</div>
+                            <div><strong>To:</strong> p6_teachers@smartreadschool.edu.hk</div>
+                            <div><strong>Date:</strong> 12 Jan 2026 10:14 AM</div>
+                            <div><strong>Subject:</strong> Logistics Coordination for School Charity Bazaar</div>
+                        </div>
+                        <p>Dear Colleagues,</p>
+                        <p>Our Annual Charity Bazaar is fast approaching on 30 January. The primary objective this year is to raise $20,000 for the local Children's Refuge. Thanks to your efforts, we have already collected over 500 donated storybooks and toys.</p>
+                        <p>However, we face a minor bottleneck regarding booth allocations. Class 6A and 6B have both requested the prime corner spots near the school main entrance to host their baked goods stalls. To prevent a conflict, I suggest we split the corner grid evenly or utilize a coin-toss system during our general coordination meeting this Friday.</p>
+                        <p>Lastly, please remind your respective classes that all pricing labels must be explicitly marked before Thursday, 28 January. We want to avoid any chaotic pricing adjustments on the morning of the bazaar.</p>
+                        <p>Thank you for your unflagging dedication to this project.</p>
+                        <p class="font-semibold text-slate-950">Warm regards,<br>Kelvin Chan<br>Head of Extracurricular Activities Committee</p>
+                    </div>
+                `,
+                questions: [
+                    { id: "q6-1", num: 1, question: "What is the core purpose of Kelvin Chan's email?", options: ["To complain about lazy student groups.", "To adjust and fix structural booth arrangements and timelines.", "To cancel the charity bazaar project entirely.", "To ask for more book donations from parents."], answer: 1, skill: "Discerning Global Authorial Intent", explanation: "The email addresses ongoing preparation adjustments, dealing with booth selection issues, and specifying tag deadlines." },
+                    { id: "q6-2", num: 2, question: "Which classes are involved in a minor dispute over booth spaces?", options: ["All Primary 6 groups", "Classes 6A and 6B", "Teachers and the Principal", "The Children's Refuge staff"], answer: 1, skill: "Direct Text Detail Extraction", explanation: "The text highlights that 'Class 6A and 6B have both requested the prime corner spots' creating a bottleneck." },
+                    { id: "q6-3", num: 3, question: "What does the word 'bottleneck' mean within the context of Paragraph 2?", options: ["A broken glass container", "A highly successful strategy", "A delay or problem that stalls progress", "An opening celebration event"], answer: 2, skill: "Inferring Advanced Vocabulary using Context Clues", explanation: "A 'bottleneck' is a problem or constraint area that slows down an entire operation; in this case, the conflict over stall real estate." },
+                    { id: "q6-4", num: 4, question: "What must teachers ensure students do before January 28?", options: ["Bake all cookies and cakes", "Count the total number of books", "Put explicit price labels on sale items", "Hold a separate coin-toss match"], answer: 2, skill: "Locating Operational Timelines / Constraints", explanation: "Kelvin explicitly requests that 'all pricing labels must be explicitly marked before Thursday, 28 January'." }
+                ]
+            }
+        ];
+
+        // Core App State Management Model
+        let state = {
+            currentTaskId: null,
+            answers: {}, // Stores user inputs keyed as {questionId: selectedOptionIndex}
+            submitted: false
+        };
+
+        // Router Engine to Control Views
+        const router = {
+            toDashboard: () => {
+                state.currentTaskId = null;
+                state.answers = {};
+                state.submitted = false;
+                document.getElementById('global-stats').classList.add('hidden');
+                renderDashboard();
+            },
+            toPractice: (taskId) => {
+                state.currentTaskId = taskId;
+                state.answers = {};
+                state.submitted = false;
+                renderPracticeView(taskId);
+            }
+        };
+
+        // Render Dashboard Cover View
+        function renderDashboard() {
+            const container = document.getElementById('main-view');
+            let html = `
+                <div class="text-center py-12 px-4 bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl shadow-xl mb-12">
+                    <span class="bg-indigo-500/30 text-indigo-300 font-bold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full border border-indigo-500/20">Interactive Reading Workspace</span>
+                    <h2 class="text-4xl font-extrabold tracking-tight mt-4 mb-3">Improve Your English Reading Skills</h2>
+                    <p class="text-indigo-200 max-w-xl mx-auto text-sm sm:text-base font-light">Select an authentic Territory-wide System Assessment text module below to challenge yourself with interactive comprehension diagnostics.</p>
+                </div>
+                
+                <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center">
+                    <span class="w-2.5 h-5 bg-indigo-600 rounded-full mr-2.5 inline-block"></span>
+                    Available Reading Comprehension Tasks (${TASKS_DATABASE.length})
+                </h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            `;
+
+            TASKS_DATABASE.forEach(task => {
+                html += `
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between overflow-hidden group">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200/60">${task.type}</span>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded ${task.difficulty === 'Easy' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : task.difficulty === 'Medium' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">${task.difficulty}</span>
+                            </div>
+                            <h4 class="text-base font-bold text-slate-900 mb-1 group-hover:text-indigo-600 transition-colors">${task.title}</h4>
+                            <p class="text-xs text-slate-400 mb-3 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                Source: ${task.source}
+                            </p>
+                        </div>
+                        <div class="px-5 py-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+                            <span class="text-xs font-medium text-slate-500 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Est: ${task.readingTime}
+                            </span>
+                            <button onclick="router.practice('${task.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs px-4 py-2 rounded-lg transition-colors shadow-sm shadow-indigo-100">
+                                Launch Practice
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+        router.practice = router.toPractice; // Bridge routing commands
+
+        // Render Active Interactive Practice View Grid Layout
+        function renderPracticeView(taskId) {
+            const task = TASKS_DATABASE.find(t => t.id === taskId);
+            const container = document.getElementById('main-view');
+            
+            let html = `
+                <div class="mb-4">
+                    <button onclick="router.toDashboard()" class="text-xs font-semibold text-slate-600 hover:text-indigo-600 flex items-center bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg> Return to Cover Page
+                    </button>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-8 items-start">
+                    <!-- Left Column: Source Texts panel -->
+                    <div class="lg:col-span-5 lg:sticky lg:top-6 space-y-4">
+                        <div class="bg-indigo-900 text-white px-4 py-3 rounded-xl shadow-sm">
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-300 block mb-0.5">Reading Content Material</span>
+                            <h2 class="text-lg font-bold">${task.title}</h2>
+                        </div>
+                        <div class="max-h-[75vh] overflow-y-auto custom-scrollbar pr-1">
+                            ${task.contextText}
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Diagnostic Check Form Frame -->
+                    <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-8">
+                        <div class="flex justify-between items-center border-b pb-4 border-slate-100">
+                            <h3 class="text-lg font-bold text-slate-900">Comprehension Assessment</h3>
+                            <span class="text-xs font-medium text-slate-500">${task.questions.length} Multiple Choice Items</span>
+                        </div>
+                        
+                        <form id="quiz-form" onsubmit="event.preventDefault(); evaluateQuiz();" class="space-y-8">
+            `;
+
+            task.questions.forEach((q, qIndex) => {
+                html += `
+                    <div id="card-${q.id}" class="p-5 rounded-xl border border-slate-100 bg-white transition-all duration-200">
+                        <div class="flex items-start space-x-3 mb-4">
+                            <span class="bg-slate-900 text-white font-bold text-xs px-2 py-1 rounded mt-0.5 shadow-sm">${q.num}</span>
+                            <p class="text-sm sm:text-base font-semibold text-slate-800">${q.question}</p>
+                        </div>
+                        
+                        <!-- Skill Target Indicator Badging System -->
+                        <div class="mb-3.5 flex items-center text-xs text-indigo-700 font-medium bg-indigo-50 px-2.5 py-1 rounded-md w-max border border-indigo-100/40">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                            Core Skill Focus: ${q.skill}
+                        </div>
+
+                        <div class="space-y-2">
+                `;
+
+                q.options.forEach((opt, oIndex) => {
+                    const optionLetter = String.fromCharCode(65 + oIndex);
+                    html += `
+                        <label id="label-${q.id}-${oIndex}" class="flex items-center p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-all duration-150 text-sm">
+                            <input type="radio" name="${q.id}" value="${oIndex}" 
+                                ${state.answers[q.id] == oIndex ? 'checked' : ''} 
+                                ${state.submitted ? 'disabled' : ''}
+                                onclick="registerAnswer('${q.id}', ${oIndex})"
+                                class="h-4 w-4 text-indigo-600 border-slate-300 focus:ring-indigo-500 mr-3">
+                            <span class="font-bold text-slate-400 mr-2">${optionLetter}.</span>
+                            <span class="text-slate-700 font-medium">${opt}</span>
+                        </label>
+                    `;
+                });
+
+                html += `
+                        </div>
+                        <!-- Micro Explanation Panel Injection Block -->
+                        <div id="explain-${q.id}" class="hidden mt-4 p-3.5 rounded-lg text-xs leading-relaxed transition-all"></div>
+                    </div>
+                `;
+            });
+
+            html += `
+                        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <div id="validation-alert" class="text-xs text-rose-600 font-medium invisible">Please complete all assessment fields first.</div>
+                            <button type="submit" id="submit-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition-all shadow-md shadow-indigo-100">
+                                Check My Answers
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        // Handle active option selections on form element context nodes
+        window.registerAnswer = function(questionId, optionIndex) {
+            state.answers[questionId] = optionIndex;
+            // Add a visual selected ring style logic
+            const currentTask = TASKS_DATABASE.find(t => t.id === state.currentTaskId);
+            const targetQuestion = currentTask.questions.find(q => q.id === questionId);
+            
+            targetQuestion.options.forEach((_, idx) => {
+                const targetLabel = document.getElementById(`label-${questionId}-${idx}`);
+                if(idx === optionIndex) {
+                    targetLabel.classList.add('border-indigo-600', 'bg-indigo-50/40');
+                } else {
+                    targetLabel.classList.remove('border-indigo-600', 'bg-indigo-50/40');
+                }
+            });
+        };
+
+        // Real-time Automated Checking Core Diagnostics Pipeline Engine 
+        window.evaluateQuiz = function() {
+            const currentTask = TASKS_DATABASE.find(t => t.id === state.currentTaskId);
+            
+            // Validation step check
+            let answeredCount = Object.keys(state.answers).length;
+            if(answeredCount < currentTask.questions.length) {
+                const alertNode = document.getElementById('validation-alert');
+                alertNode.classList.remove('invisible');
+                setTimeout(() => alertNode.classList.add('invisible'), 3000);
+                return;
+            }
+
+            state.submitted = true;
+            let score = 0;
+
+            // Lock submission execution button configuration metrics context
+            const subBtn = document.getElementById('submit-btn');
+            subBtn.disabled = true;
+            subBtn.classList.replace('bg-indigo-600', 'bg-slate-300');
+            subBtn.innerText = "Assessment Evaluated";
+
+            currentTask.questions.forEach(q => {
+                const userSelection = parseInt(state.answers[q.id]);
+                const correctAnswerIndex = q.answer;
+                const cardNode = document.getElementById(`card-${q.id}`);
+                const explainNode = document.getElementById(`explain-${q.id}`);
+
+                // Strip baseline structural styling contexts
+                cardNode.classList.remove('border-slate-100');
+                explainNode.classList.remove('hidden');
+
+                if(userSelection === correctAnswerIndex) {
+                    score++;
+                    cardNode.classList.add('border-emerald-200', 'bg-emerald-50/20');
+                    explainNode.classList.add('bg-emerald-50', 'text-emerald-800', 'border', 'border-emerald-100');
+                    explainNode.innerHTML = `<strong>✓ Correct:</strong> ${q.explanation}`;
+                } else {
+                    cardNode.classList.add('border-rose-200', 'bg-rose-50/20');
+                    explainNode.classList.add('bg-rose-50', 'text-rose-800', 'border', 'border-rose-100');
+                    explainNode.innerHTML = `<strong>✗ Incorrect:</strong> The right answer is option <strong>${String.fromCharCode(65 + correctAnswerIndex)}</strong>.<br><span class="mt-1 block">${q.explanation}</span>`;
+                }
+
+                // Mutate option UI frames to signal mapping vectors directly
+                q.options.forEach((_, oIndex) => {
+                    const labelNode = document.getElementById(`label-${q.id}-${oIndex}`);
+                    labelNode.classList.remove('hover:bg-slate-50', 'cursor-pointer');
+                    
+                    if(oIndex === correctAnswerIndex) {
+                        labelNode.classList.add('bg-emerald-100/70', 'border-emerald-500', 'text-emerald-900', 'font-medium');
+                    }
+                    if(oIndex === userSelection && userSelection !== correctAnswerIndex) {
+                        labelNode.classList.add('bg-rose-100/70', 'border-rose-400', 'text-rose-900');
+                    }
+                });
+            });
+
+            // Set global scores summary header element metrics text contextual strings frame indicators
+            const globalStats = document.getElementById('global-stats');
+            globalStats.innerText = `Score: ${score} / ${currentTask.questions.length} Checked`;
+            globalStats.classList.remove('hidden');
+            
+            // Scroll user smooth velocity to terminal panel header workspace context area view limits
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // Initialize Router Core State Engine Instantiation Runtime
+        document.addEventListener("DOMContentLoaded", () => {
+            router.toDashboard();
+        });
+    </script>
+</body>
+</html>
